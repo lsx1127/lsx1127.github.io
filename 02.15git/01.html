@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			/*
+			 * git:工具；
+			 * 		版本控制工具；
+			 * svn与git区别：
+			 * 		集成式SVN：有个中央服务器，所有的版本控制都要经过这台服务器并且必须联网；没有网络是不能进行版本控制，共享的范围比较小；
+			 * 
+			 * 		分布式git：每台计算机就是台服务器版本控制不需要联网就能形成版本。
+			 * githup:网站：
+			 * 
+			 * git创建的文件夹放到d盘中：
+			 * 		1.在git中复制网址
+			 * 		2.cd d:
+			 * 		3.git clone 网址；
+			 * 		4.点击回车；
+			 * 查看状态：git status
+			 * 从工作区到暂存区：git add 文件名；
+			 * 从暂存到版本：git commit -m "注释"
+			 * 
+			 * 到了版本去才有版本控制；
+			 * 批量操作；git add . 
+			 * 直接从工作区到版本区：git commit - a -m "注释"
+			 * 
+			 * 工作区与暂存区区别：git diff；
+			 * 暂存与版本去的区别：git diff--cached;
+			 * 工作区与版本区的区别：git diff master;
+			 * 从暂存区撤销到工作区：git reset HEAD 文件名；
+			 * 将工作区的代码撤销到（优先暂存区，暂存区没有那么久撤销到版本区）
+			 * git checkout--文件名；
+			 * 如果修改多个文件之后，在提交版本库的时候，有文件遗漏了，可以通过
+			 * 		1.把遗漏的文件存放到暂存区；
+			 * 		2.git commit -m"注释" --amend
+			 * 这个时候。最近一次的版本会和上次的版本合成一个版本，并将上一个版本清楚；
+			 * 
+			 * 如果将文件提交到暂存区后手动删除工作区的文件后，想再将暂存区文件删除：git rm 文件名；
+			 * 删除工作区和暂存区文件：git rm -f 文件名；
+			 * 只删除暂存区保留工作区：git rm -cached 文件名；（了解）
+			 * 
+			 * 删除整个文件夹 ：git rm -rf 文件名；
+			 * 恢复（回滚）：
+			 * 		恢复单个文件：git checkout 文件名；
+			 * 		恢复整个历史版本：git reset --hard 历史版本号（git log 查看）：
+			 * 		操作记录：git reflog;
+			 * 		通过历史记录恢复：
+			 * 			查看操作的历史记录：git reflog;
+			 * 			以当前版本为基准再回滚上一个版本：git reset --hard HEAD^
+			 * 			以当前版本为基准跳着恢复：git reset --hard HEAD~数字；
+			 * 
+			 *  远程仓库；
+			 * 		git remote (查看远程仓库的名字)
+			 * 		git remote -v（查看上传，下载的地址）
+			 * 		git push origin master(将文件上传到githup)
+			 * 
+			 *  分支：
+			 * 		使用场景：
+			 * 			1.开发不稳定版本的时候；
+			 * 			2.开发生命周期较短的项目；
+			 * 			3.多人协作开发；
+			 * 		查看分支：git branch;
+			 * 		新建分支：git branch 分支名；
+			 * 		切换分支：git checkout 分支名；
+			 * 		创建并切换分支：git checkout -b 分支名；
+			 * 		强行删除没有合并分支：git branch -D 分支名；
+			 * 		删除合并后的分支：git branch -d 分支名；
+			 * 		合并分支：git merge 分支名；
+			 * 		查看已经合并的分支：git branch --merged；
+			 * 		查看没有合并的分支：git branch --no-merged;
+			 * 			
+			 * 
+			 * 		多人协作开发：
+			 * 			1.找合伙人
+			 * 				进入github 的项目中。点击New collaborator;
+			 * 				输入小伙伴的名字，等待小伙伴确认加入；
+			 * 			2.小伙伴就可以和自己开发同一个项目
+			 * 开发的时候回遇到冲突的问题；
+			 * 解决：
+			 *  1.精远程仓库的代码拉取下来：git fetch
+			 *  2.对比差异： git diff master origin/master
+			 * 	3.合并两边的代码，人为解决：git merge origin/master;
+			 *  4.人为判断解决（删除不要的代码）
+			 * 	5.重新提交并push到远程仓库中；
+			 * 		
+			 * 
+			 * 当自己没有开发权限时，也想参与别人的项目时
+			 * 		1.fork 别人的项目（自己的GitHub中就有了别人的项目目录{带个小叉}）；
+			 * 		2.把参与的项目clone下来。修改，提交；
+			 * 		3.发送修改合并的请求；
+			 * 			（1）在项目导航栏中有了个 pull request ，点击
+			 * 			（2）点击create pull request ；
+			 * 			（3）可以留言。。点击create pull request（等待确认） ；
+			 * 	
+			 * 当收到别人帮忙修改项目的通知时。
+			 * 		1.点击 opened pull request（如果有人发送请求在通知栏中就有此链接）
+			 * 		2.files changed 去查看修改的内容（是否值得合并）
+			 * 		3.如果值得合并，点击merge pull request；
+			 * 		4.confirm merge （确认合并）；
+			 * 		5.回复留言；
+			 * 如果想避免每次都克隆别人更新的项目：
+			 * 		1.先把自己的fork的项目删除；
+			 *      2.在重新fork别人的项目；
+			 * 		3.git pull；
+			 */
+			
+		</script>
+	</body>
+</html>
